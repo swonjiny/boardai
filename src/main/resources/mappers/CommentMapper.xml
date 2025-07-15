@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.CommentRepository">
+
+    <!-- Insert -->
+    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId">
+        INSERT INTO comment (board_id, content, writer)
+        VALUES (#{boardId}, #{content}, #{writer})
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="Comment">
+        SELECT * FROM comment WHERE comment_id = #{commentId}
+    </select>
+
+    <select id="findByBoardId" parameterType="Long" resultType="Comment">
+        SELECT * FROM comment WHERE board_id = #{boardId} ORDER BY comment_id ASC
+    </select>
+
+    <!-- Update -->
+    <update id="update" parameterType="Comment">
+        UPDATE comment
+        SET content = #{content}, modified_date = CURRENT_TIMESTAMP
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM comment WHERE comment_id = #{commentId}
+    </delete>
+
+    <delete id="deleteByBoardId" parameterType="Long">
+        DELETE FROM comment WHERE board_id = #{boardId}
+    </delete>
+
+</mapper>

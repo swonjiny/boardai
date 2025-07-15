@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.FileAttachmentRepository">
+
+    <!-- Insert -->
+    <insert id="insert" parameterType="FileAttachment" useGeneratedKeys="true" keyProperty="fileId">
+        INSERT INTO file (board_id, original_filename, stored_filename, file_size, file_type)
+        VALUES (#{boardId}, #{originalFilename}, #{storedFilename}, #{fileSize}, #{fileType})
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List">
+        INSERT INTO file (board_id, original_filename, stored_filename, file_size, file_type)
+        VALUES
+        <foreach collection="list" item="file" separator=",">
+            (#{file.boardId}, #{file.originalFilename}, #{file.storedFilename}, #{file.fileSize}, #{file.fileType})
+        </foreach>
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="FileAttachment">
+        SELECT * FROM file WHERE file_id = #{fileId}
+    </select>
+
+    <select id="findByBoardId" parameterType="Long" resultType="FileAttachment">
+        SELECT * FROM file WHERE board_id = #{boardId}
+    </select>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM file WHERE file_id = #{fileId}
+    </delete>
+
+    <delete id="deleteByBoardId" parameterType="Long">
+        DELETE FROM file WHERE board_id = #{boardId}
+    </delete>
+
+</mapper>

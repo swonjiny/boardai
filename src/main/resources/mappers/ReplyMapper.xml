@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.ReplyRepository">
+
+    <!-- Insert -->
+    <insert id="insert" parameterType="Reply" useGeneratedKeys="true" keyProperty="replyId">
+        INSERT INTO reply (comment_id, content, writer)
+        VALUES (#{commentId}, #{content}, #{writer})
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="Reply">
+        SELECT * FROM reply WHERE reply_id = #{replyId}
+    </select>
+
+    <select id="findByCommentId" parameterType="Long" resultType="Reply">
+        SELECT * FROM reply WHERE comment_id = #{commentId} ORDER BY reply_id ASC
+    </select>
+
+    <!-- Update -->
+    <update id="update" parameterType="Reply">
+        UPDATE reply
+        SET content = #{content}, modified_date = CURRENT_TIMESTAMP
+        WHERE reply_id = #{replyId}
+    </update>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM reply WHERE reply_id = #{replyId}
+    </delete>
+
+    <delete id="deleteByCommentId" parameterType="Long">
+        DELETE FROM reply WHERE comment_id = #{commentId}
+    </delete>
+
+</mapper>
