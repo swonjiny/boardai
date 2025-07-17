@@ -89,7 +89,7 @@ Files are stored in the `files` directory at the root of the application. The di
 
 ## Web Editor
 
-The application supports web editors for content formatting. The content is stored as HTML in the database.
+The application supports web editors for content formatting. The content is stored as HTML in the database and can include embedded blob images (as base64-encoded data URLs). This allows for rich content with inline images without requiring separate file uploads.
 
 ## Security
 

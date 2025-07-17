@@ -30,6 +30,9 @@ dependencies {
     implementation 'commons-io:commons-io:2.15.1'
     implementation 'commons-fileupload:commons-fileupload:1.5'
 
+    // P6Spy for SQL query logging with formatting
+    implementation 'p6spy:p6spy:3.9.1'
+
     // Swagger UI (SpringDoc OpenAPI)
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.4.0'
 

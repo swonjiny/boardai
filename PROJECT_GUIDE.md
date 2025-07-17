@@ -386,7 +386,7 @@ The project uses the following database schema:
 CREATE TABLE board (
     board_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    content TEXT NOT NULL,
+    content LONGTEXT NOT NULL,
     writer VARCHAR(100) NOT NULL,
     view_count INT DEFAULT 0,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -413,7 +413,7 @@ CREATE TABLE file (
 CREATE TABLE comment (
     comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     board_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
+    content LONGTEXT NOT NULL,
     writer VARCHAR(100) NOT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -426,7 +426,7 @@ CREATE TABLE comment (
 CREATE TABLE reply (
     reply_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     comment_id BIGINT NOT NULL,
-    content TEXT NOT NULL,
+    content LONGTEXT NOT NULL,
     writer VARCHAR(100) NOT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

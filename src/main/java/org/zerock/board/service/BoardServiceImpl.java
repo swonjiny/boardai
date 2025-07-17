@@ -34,9 +34,15 @@ public class BoardServiceImpl implements BoardService {
 
     private final String fileUploadDirectory = "files";
 
+    // Content 최대 길이 설정 (데이터베이스 스키마에 맞게 조정)
+    private static final int MAX_CONTENT_LENGTH = 16777216; // LONGTEXT 타입의 최대 길이 (16MB)
+
     @Override
     @Transactional
     public Long createBoard(Board board, List<MultipartFile> files) {
+        // Content 길이 검증
+        validateContentLength(board.getContent());
+
         // Save board
         boardRepository.insert(board);
         Long boardId = board.getBoardId();
@@ -96,6 +102,9 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.findById(board.getBoardId())
                 .orElseThrow(() -> new RuntimeException("Board not found with id: " + board.getBoardId()));
 
+        // Content 길이 검증
+        validateContentLength(board.getContent());
+
         // Update board
         boardRepository.update(board);
 
@@ -121,6 +130,18 @@ public class BoardServiceImpl implements BoardService {
         List<FileAttachment> files = fileAttachmentRepository.findByBoardId(boardId);
         for (FileAttachment file : files) {
             deletePhysicalFile(file.getStoredFilename());
+        }
+    }
+
+    /**
+     * Content 길이를 검증하는 메서드
+     */
+    private void validateContentLength(String content) {
+        if (content != null && content.length() > MAX_CONTENT_LENGTH) {
+            throw new IllegalArgumentException(
+                String.format("Content length exceeds maximum allowed length of %d characters. Current length: %d",
+                    MAX_CONTENT_LENGTH, content.length())
+            );
         }
     }
 

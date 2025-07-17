@@ -61,7 +61,7 @@ API 응답을 위한 데이터 전송 객체들입니다.
 게시글 정보를 저장합니다.
 - `board_id`: 게시글 ID (기본 키)
 - `title`: 제목
-- `content`: 내용
+- `content`: 내용 (LONGTEXT 타입, HTML 형식과 base64로 인코딩된 blob 이미지 포함 가능)
 - `writer`: 작성자
 - `view_count`: 조회수
 - `created_date`: 생성일
@@ -81,7 +81,7 @@ API 응답을 위한 데이터 전송 객체들입니다.
 댓글 정보를 저장합니다.
 - `comment_id`: 댓글 ID (기본 키)
 - `board_id`: 게시글 ID (외래 키)
-- `content`: 내용
+- `content`: 내용 (LONGTEXT 타입, HTML 형식과 base64로 인코딩된 blob 이미지 포함 가능)
 - `writer`: 작성자
 - `created_date`: 생성일
 - `modified_date`: 수정일
@@ -90,7 +90,7 @@ API 응답을 위한 데이터 전송 객체들입니다.
 대댓글 정보를 저장합니다.
 - `reply_id`: 대댓글 ID (기본 키)
 - `comment_id`: 댓글 ID (외래 키)
-- `content`: 내용
+- `content`: 내용 (LONGTEXT 타입, HTML 형식과 base64로 인코딩된 blob 이미지 포함 가능)
 - `writer`: 작성자
 - `created_date`: 생성일
 - `modified_date`: 수정일
