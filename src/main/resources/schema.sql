@@ -1,4 +1,4 @@
--- Database schema for Q&A board
+-- MariaDB database schema for Q&A board
 
 -- Drop tables if they exist
 DROP TABLE IF EXISTS reply;

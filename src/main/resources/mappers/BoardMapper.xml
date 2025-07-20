@@ -18,8 +18,17 @@
     </select>
 
     <select id="findAllWithPaging" resultType="Board">
-        SELECT * FROM board ORDER BY board_id DESC
-        LIMIT #{offset}, #{limit}
+        <if test="_databaseId == 'mariadb'">
+            SELECT * FROM board ORDER BY board_id DESC
+            LIMIT #{offset}, #{limit}
+        </if>
+        <if test="_databaseId == 'oracle'">
+            SELECT * FROM (
+                SELECT b.*, ROWNUM AS rnum FROM (
+                    SELECT * FROM board ORDER BY board_id DESC
+                ) b WHERE ROWNUM &lt;= #{offset} + #{limit}
+            ) WHERE rnum > #{offset}
+        </if>
     </select>
 
     <select id="count" resultType="int">
