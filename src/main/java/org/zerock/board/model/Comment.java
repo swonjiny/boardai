@@ -15,11 +15,13 @@ import java.util.List;
 public class Comment {
     private Long commentId;
     private Long boardId;
+    private Long parentCommentId;  // Added for nested comments
     private String content;
     private String writer;
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
-    // Transient field (not stored in DB)
+    // Transient fields (not stored in DB)
     private List<Reply> replies;
+    private List<Comment> children;  // Added for nested comments
 }

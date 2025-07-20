@@ -33,11 +33,13 @@ CREATE TABLE file (
 CREATE TABLE comment (
     comment_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     board_id BIGINT NOT NULL,
+    parent_comment_id BIGINT NULL,
     content LONGTEXT NOT NULL,
     writer VARCHAR(100) NOT NULL,
     created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (board_id) REFERENCES board(board_id) ON DELETE CASCADE
+    FOREIGN KEY (board_id) REFERENCES board(board_id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_comment_id) REFERENCES comment(comment_id) ON DELETE CASCADE
 );
 
 -- Reply table for replies to comments

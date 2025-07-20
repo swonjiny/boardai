@@ -4,14 +4,14 @@
 
     <!-- Insert for MariaDB -->
     <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId" databaseId="mariadb">
-        INSERT INTO comment (board_id, content, writer)
-        VALUES (#{boardId}, #{content}, #{writer})
+        INSERT INTO comment (board_id, parent_comment_id, content, writer)
+        VALUES (#{boardId}, #{parentCommentId}, #{content}, #{writer})
     </insert>
 
     <!-- Insert for Oracle -->
     <insert id="insert" parameterType="Comment" databaseId="oracle">
-        INSERT INTO comment (comment_id, board_id, content, writer)
-        VALUES (comment_seq.NEXTVAL, #{boardId}, #{content}, #{writer})
+        INSERT INTO comment (comment_id, board_id, parent_comment_id, content, writer)
+        VALUES (comment_seq.NEXTVAL, #{boardId}, #{parentCommentId}, #{content}, #{writer})
         <selectKey keyProperty="commentId" resultType="Long" order="AFTER">
             SELECT comment_seq.CURRVAL FROM dual
         </selectKey>
@@ -24,6 +24,14 @@
 
     <select id="findByBoardId" parameterType="Long" resultType="Comment">
         SELECT * FROM comment WHERE board_id = #{boardId} ORDER BY comment_id ASC
+    </select>
+
+    <select id="findByParentCommentId" parameterType="Long" resultType="Comment">
+        SELECT * FROM comment WHERE parent_comment_id = #{parentCommentId} ORDER BY comment_id ASC
+    </select>
+
+    <select id="findTopLevelByBoardId" parameterType="Long" resultType="Comment">
+        SELECT * FROM comment WHERE board_id = #{boardId} AND parent_comment_id IS NULL ORDER BY comment_id ASC
     </select>
 
     <!-- Update for MariaDB -->
@@ -47,6 +55,10 @@
 
     <delete id="deleteByBoardId" parameterType="Long">
         DELETE FROM comment WHERE board_id = #{boardId}
+    </delete>
+
+    <delete id="deleteByParentCommentId" parameterType="Long">
+        DELETE FROM comment WHERE parent_comment_id = #{parentCommentId}
     </delete>
 
 </mapper>

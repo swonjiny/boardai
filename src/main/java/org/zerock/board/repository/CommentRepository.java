@@ -14,6 +14,8 @@ public interface CommentRepository {
     // Read
     Optional<Comment> findById(Long commentId);
     List<Comment> findByBoardId(Long boardId);
+    List<Comment> findByParentCommentId(Long parentCommentId);
+    List<Comment> findTopLevelByBoardId(Long boardId);
 
     // Update
     void update(Comment comment);
@@ -21,4 +23,5 @@ public interface CommentRepository {
     // Delete
     void deleteById(Long commentId);
     void deleteByBoardId(Long boardId);
+    void deleteByParentCommentId(Long parentCommentId);
 }
