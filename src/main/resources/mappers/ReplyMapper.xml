@@ -2,10 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.zerock.board.repository.ReplyRepository">
 
-    <!-- Insert -->
-    <insert id="insert" parameterType="Reply" useGeneratedKeys="true" keyProperty="replyId">
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="Reply" useGeneratedKeys="true" keyProperty="replyId" databaseId="mariadb">
         INSERT INTO reply (comment_id, content, writer)
         VALUES (#{commentId}, #{content}, #{writer})
+    </insert>
+
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="Reply" databaseId="oracle">
+        INSERT INTO reply (reply_id, comment_id, content, writer)
+        VALUES (reply_seq.NEXTVAL, #{commentId}, #{content}, #{writer})
+        <selectKey keyProperty="replyId" resultType="Long" order="AFTER">
+            SELECT reply_seq.CURRVAL FROM dual
+        </selectKey>
     </insert>
 
     <!-- Select -->
@@ -17,10 +26,17 @@
         SELECT * FROM reply WHERE comment_id = #{commentId} ORDER BY reply_id ASC
     </select>
 
-    <!-- Update -->
-    <update id="update" parameterType="Reply">
+    <!-- Update for MariaDB -->
+    <update id="update" parameterType="Reply" databaseId="mariadb">
         UPDATE reply
         SET content = #{content}, modified_date = CURRENT_TIMESTAMP
+        WHERE reply_id = #{replyId}
+    </update>
+
+    <!-- Update for Oracle -->
+    <update id="update" parameterType="Reply" databaseId="oracle">
+        UPDATE reply
+        SET content = #{content}, modified_date = SYSTIMESTAMP
         WHERE reply_id = #{replyId}
     </update>
 

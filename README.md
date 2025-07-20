@@ -125,15 +125,18 @@ The application supports both MariaDB and Oracle databases. By default, it uses 
 
 1. **Configuration**: Both database connections are configured in `application.properties`.
 2. **Dynamic Routing**: The application uses Spring's AbstractRoutingDataSource to dynamically route database operations to the selected database.
-3. **Database-Specific SQL**: MyBatis is configured to use database-specific SQL statements where needed (e.g., for pagination).
-4. **Schema Initialization**: The appropriate schema file is loaded based on the selected database type.
-5. **API Endpoints**: The application provides API endpoints to check and switch the current database type.
+3. **Lazy Loading**: Oracle database connections are not initialized until actually needed.
+4. **Database-Specific SQL**: MyBatis is configured to use database-specific SQL statements where needed (e.g., for pagination).
+5. **Schema Initialization**: The appropriate schema file is loaded based on the selected database type.
+6. **API Endpoints**: The application provides API endpoints to check and switch the current database type.
 
 ### Use Cases
 
 - **Development and Testing**: Test your application against different database systems without changing the code.
 - **Migration**: Gradually migrate from one database system to another.
 - **Multi-tenant Deployments**: Support different database systems for different deployments.
+
+For more detailed information about database connections, configuration, and troubleshooting, see [Database Connection Guide](DATABASE_CONNECTION_GUIDE.md).
 
 ## Security
 

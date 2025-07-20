@@ -2,10 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.zerock.board.repository.CommentRepository">
 
-    <!-- Insert -->
-    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId">
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="commentId" databaseId="mariadb">
         INSERT INTO comment (board_id, content, writer)
         VALUES (#{boardId}, #{content}, #{writer})
+    </insert>
+
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="Comment" databaseId="oracle">
+        INSERT INTO comment (comment_id, board_id, content, writer)
+        VALUES (comment_seq.NEXTVAL, #{boardId}, #{content}, #{writer})
+        <selectKey keyProperty="commentId" resultType="Long" order="AFTER">
+            SELECT comment_seq.CURRVAL FROM dual
+        </selectKey>
     </insert>
 
     <!-- Select -->
@@ -17,10 +26,17 @@
         SELECT * FROM comment WHERE board_id = #{boardId} ORDER BY comment_id ASC
     </select>
 
-    <!-- Update -->
-    <update id="update" parameterType="Comment">
+    <!-- Update for MariaDB -->
+    <update id="update" parameterType="Comment" databaseId="mariadb">
         UPDATE comment
         SET content = #{content}, modified_date = CURRENT_TIMESTAMP
+        WHERE comment_id = #{commentId}
+    </update>
+
+    <!-- Update for Oracle -->
+    <update id="update" parameterType="Comment" databaseId="oracle">
+        UPDATE comment
+        SET content = #{content}, modified_date = SYSTIMESTAMP
         WHERE comment_id = #{commentId}
     </update>
 

@@ -2,17 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.zerock.board.repository.FileAttachmentRepository">
 
-    <!-- Insert -->
-    <insert id="insert" parameterType="FileAttachment" useGeneratedKeys="true" keyProperty="fileId">
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="FileAttachment" useGeneratedKeys="true" keyProperty="fileId" databaseId="mariadb">
         INSERT INTO file (board_id, original_filename, stored_filename, file_size, file_type)
         VALUES (#{boardId}, #{originalFilename}, #{storedFilename}, #{fileSize}, #{fileType})
     </insert>
 
-    <insert id="insertBatch" parameterType="java.util.List">
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="FileAttachment" databaseId="oracle">
+        INSERT INTO file (file_id, board_id, original_filename, stored_filename, file_size, file_type)
+        VALUES (file_seq.NEXTVAL, #{boardId}, #{originalFilename}, #{storedFilename}, #{fileSize}, #{fileType})
+        <selectKey keyProperty="fileId" resultType="Long" order="AFTER">
+            SELECT file_seq.CURRVAL FROM dual
+        </selectKey>
+    </insert>
+
+    <!-- Batch Insert for MariaDB -->
+    <insert id="insertBatch" parameterType="java.util.List" databaseId="mariadb">
         INSERT INTO file (board_id, original_filename, stored_filename, file_size, file_type)
         VALUES
         <foreach collection="list" item="file" separator=",">
             (#{file.boardId}, #{file.originalFilename}, #{file.storedFilename}, #{file.fileSize}, #{file.fileType})
+        </foreach>
+    </insert>
+
+    <!-- Batch Insert for Oracle -->
+    <insert id="insertBatch" parameterType="java.util.List" databaseId="oracle">
+        <foreach collection="list" item="file" separator=";" open="BEGIN" close="END;">
+            INSERT INTO file (file_id, board_id, original_filename, stored_filename, file_size, file_type)
+            VALUES (file_seq.NEXTVAL, #{file.boardId}, #{file.originalFilename}, #{file.storedFilename}, #{file.fileSize}, #{file.fileType})
         </foreach>
     </insert>
 
