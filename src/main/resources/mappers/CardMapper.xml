@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.CardRepository">
+
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="Card" useGeneratedKeys="true" keyProperty="cardId" databaseId="mariadb">
+        INSERT INTO card (layout_id, position, title, horizontal_collapse, vertical_collapse, title_only, expanded, created_date, modified_date)
+        VALUES (#{layoutId}, #{position}, #{title}, #{horizontalCollapse}, #{verticalCollapse}, #{titleOnly}, #{expanded}, NOW(), NOW())
+    </insert>
+
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="Card" databaseId="oracle">
+        INSERT INTO card (card_id, layout_id, position, title, horizontal_collapse, vertical_collapse, title_only, expanded, created_date, modified_date)
+        VALUES (card_seq.NEXTVAL, #{layoutId}, #{position}, #{title},
+                CASE WHEN #{horizontalCollapse} = true THEN 1 ELSE 0 END,
+                CASE WHEN #{verticalCollapse} = true THEN 1 ELSE 0 END,
+                CASE WHEN #{titleOnly} = true THEN 1 ELSE 0 END,
+                CASE WHEN #{expanded} = true THEN 1 ELSE 0 END,
+                SYSTIMESTAMP, SYSTIMESTAMP)
+        <selectKey keyProperty="cardId" resultType="Long" order="AFTER">
+            SELECT card_seq.CURRVAL FROM dual
+        </selectKey>
+    </insert>
+
+    <!-- Batch Insert for MariaDB -->
+    <insert id="insertBatch" parameterType="java.util.List" databaseId="mariadb">
+        INSERT INTO card (layout_id, position, title, horizontal_collapse, vertical_collapse, title_only, expanded, created_date, modified_date)
+        VALUES
+        <foreach collection="list" item="card" separator=",">
+            (#{card.layoutId}, #{card.position}, #{card.title}, #{card.horizontalCollapse}, #{card.verticalCollapse}, #{card.titleOnly}, #{card.expanded}, NOW(), NOW())
+        </foreach>
+    </insert>
+
+    <!-- Batch Insert for Oracle -->
+    <insert id="insertBatch" parameterType="java.util.List" databaseId="oracle">
+        <foreach collection="list" item="card" separator=";" open="BEGIN" close="END;">
+            INSERT INTO card (card_id, layout_id, position, title, horizontal_collapse, vertical_collapse, title_only, expanded, created_date, modified_date)
+            VALUES (card_seq.NEXTVAL, #{card.layoutId}, #{card.position}, #{card.title},
+                    CASE WHEN #{card.horizontalCollapse} = true THEN 1 ELSE 0 END,
+                    CASE WHEN #{card.verticalCollapse} = true THEN 1 ELSE 0 END,
+                    CASE WHEN #{card.titleOnly} = true THEN 1 ELSE 0 END,
+                    CASE WHEN #{card.expanded} = true THEN 1 ELSE 0 END,
+                    SYSTIMESTAMP, SYSTIMESTAMP)
+        </foreach>
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="Card">
+        <if test="_databaseId == 'mariadb'">
+            SELECT * FROM card WHERE card_id = #{cardId}
+        </if>
+        <if test="_databaseId == 'oracle'">
+            SELECT
+                card_id, layout_id, position, title,
+                CASE WHEN horizontal_collapse = 1 THEN true ELSE false END as horizontal_collapse,
+                CASE WHEN vertical_collapse = 1 THEN true ELSE false END as vertical_collapse,
+                CASE WHEN title_only = 1 THEN true ELSE false END as title_only,
+                CASE WHEN expanded = 1 THEN true ELSE false END as expanded,
+                created_date, modified_date
+            FROM card WHERE card_id = #{cardId}
+        </if>
+    </select>
+
+    <select id="findByLayoutId" parameterType="Long" resultType="Card">
+        <if test="_databaseId == 'mariadb'">
+            SELECT * FROM card WHERE layout_id = #{layoutId} ORDER BY position
+        </if>
+        <if test="_databaseId == 'oracle'">
+            SELECT
+                card_id, layout_id, position, title,
+                CASE WHEN horizontal_collapse = 1 THEN true ELSE false END as horizontal_collapse,
+                CASE WHEN vertical_collapse = 1 THEN true ELSE false END as vertical_collapse,
+                CASE WHEN title_only = 1 THEN true ELSE false END as title_only,
+                CASE WHEN expanded = 1 THEN true ELSE false END as expanded,
+                created_date, modified_date
+            FROM card WHERE layout_id = #{layoutId} ORDER BY position
+        </if>
+    </select>
+
+    <!-- Update for MariaDB -->
+    <update id="update" parameterType="Card" databaseId="mariadb">
+        UPDATE card
+        SET position = #{position},
+            title = #{title},
+            horizontal_collapse = #{horizontalCollapse},
+            vertical_collapse = #{verticalCollapse},
+            title_only = #{titleOnly},
+            expanded = #{expanded},
+            modified_date = NOW()
+        WHERE card_id = #{cardId}
+    </update>
+
+    <!-- Update for Oracle -->
+    <update id="update" parameterType="Card" databaseId="oracle">
+        UPDATE card
+        SET position = #{position},
+            title = #{title},
+            horizontal_collapse = CASE WHEN #{horizontalCollapse} = true THEN 1 ELSE 0 END,
+            vertical_collapse = CASE WHEN #{verticalCollapse} = true THEN 1 ELSE 0 END,
+            title_only = CASE WHEN #{titleOnly} = true THEN 1 ELSE 0 END,
+            expanded = CASE WHEN #{expanded} = true THEN 1 ELSE 0 END,
+            modified_date = SYSTIMESTAMP
+        WHERE card_id = #{cardId}
+    </update>
+
+    <!-- Batch Update for MariaDB -->
+    <update id="updateBatch" parameterType="java.util.List" databaseId="mariadb">
+        <foreach collection="list" item="card" separator=";">
+            UPDATE card
+            SET position = #{card.position},
+                title = #{card.title},
+                horizontal_collapse = #{card.horizontalCollapse},
+                vertical_collapse = #{card.verticalCollapse},
+                title_only = #{card.titleOnly},
+                expanded = #{card.expanded},
+                modified_date = NOW()
+            WHERE card_id = #{card.cardId}
+        </foreach>
+    </update>
+
+    <!-- Batch Update for Oracle -->
+    <update id="updateBatch" parameterType="java.util.List" databaseId="oracle">
+        <foreach collection="list" item="card" separator=";" open="BEGIN" close="END;">
+            UPDATE card
+            SET position = #{card.position},
+                title = #{card.title},
+                horizontal_collapse = CASE WHEN #{card.horizontalCollapse} = true THEN 1 ELSE 0 END,
+                vertical_collapse = CASE WHEN #{card.verticalCollapse} = true THEN 1 ELSE 0 END,
+                title_only = CASE WHEN #{card.titleOnly} = true THEN 1 ELSE 0 END,
+                expanded = CASE WHEN #{card.expanded} = true THEN 1 ELSE 0 END,
+                modified_date = SYSTIMESTAMP
+            WHERE card_id = #{card.cardId}
+        </foreach>
+    </update>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM card WHERE card_id = #{cardId}
+    </delete>
+
+    <delete id="deleteByLayoutId" parameterType="Long">
+        DELETE FROM card WHERE layout_id = #{layoutId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.ScreenLayoutRepository">
+
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="ScreenLayout" useGeneratedKeys="true" keyProperty="layoutId" databaseId="mariadb">
+        INSERT INTO screen_layout (name, created_date, modified_date)
+        VALUES (#{name}, NOW(), NOW())
+    </insert>
+
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="ScreenLayout" databaseId="oracle">
+        INSERT INTO screen_layout (layout_id, name, created_date, modified_date)
+        VALUES (screen_layout_seq.NEXTVAL, #{name}, SYSTIMESTAMP, SYSTIMESTAMP)
+        <selectKey keyProperty="layoutId" resultType="Long" order="AFTER">
+            SELECT screen_layout_seq.CURRVAL FROM dual
+        </selectKey>
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="ScreenLayout">
+        SELECT * FROM screen_layout WHERE layout_id = #{layoutId}
+    </select>
+
+    <select id="findAll" resultType="ScreenLayout">
+        SELECT * FROM screen_layout ORDER BY layout_id DESC
+    </select>
+
+    <!-- Update for MariaDB -->
+    <update id="update" parameterType="ScreenLayout" databaseId="mariadb">
+        UPDATE screen_layout
+        SET name = #{name}, modified_date = NOW()
+        WHERE layout_id = #{layoutId}
+    </update>
+
+    <!-- Update for Oracle -->
+    <update id="update" parameterType="ScreenLayout" databaseId="oracle">
+        UPDATE screen_layout
+        SET name = #{name}, modified_date = SYSTIMESTAMP
+        WHERE layout_id = #{layoutId}
+    </update>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM screen_layout WHERE layout_id = #{layoutId}
+    </delete>
+
+</mapper>

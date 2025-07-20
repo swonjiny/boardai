@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.zerock.board.repository.CentralMenuRepository">
+
+    <!-- Insert for MariaDB -->
+    <insert id="insert" parameterType="CentralMenu" useGeneratedKeys="true" keyProperty="menuId" databaseId="mariadb">
+        INSERT INTO central_menu (layout_id, priority, expanded, created_date, modified_date)
+        VALUES (#{layoutId}, #{priority}, #{expanded}, NOW(), NOW())
+    </insert>
+
+    <!-- Insert for Oracle -->
+    <insert id="insert" parameterType="CentralMenu" databaseId="oracle">
+        INSERT INTO central_menu (menu_id, layout_id, priority, expanded, created_date, modified_date)
+        VALUES (central_menu_seq.NEXTVAL, #{layoutId},
+                CASE WHEN #{priority} = true THEN 1 ELSE 0 END,
+                CASE WHEN #{expanded} = true THEN 1 ELSE 0 END,
+                SYSTIMESTAMP, SYSTIMESTAMP)
+        <selectKey keyProperty="menuId" resultType="Long" order="AFTER">
+            SELECT central_menu_seq.CURRVAL FROM dual
+        </selectKey>
+    </insert>
+
+    <!-- Select -->
+    <select id="findById" parameterType="Long" resultType="CentralMenu">
+        <if test="_databaseId == 'mariadb'">
+            SELECT * FROM central_menu WHERE menu_id = #{menuId}
+        </if>
+        <if test="_databaseId == 'oracle'">
+            SELECT
+                menu_id, layout_id,
+                CASE WHEN priority = 1 THEN true ELSE false END as priority,
+                CASE WHEN expanded = 1 THEN true ELSE false END as expanded,
+                created_date, modified_date
+            FROM central_menu WHERE menu_id = #{menuId}
+        </if>
+    </select>
+
+    <select id="findByLayoutId" parameterType="Long" resultType="CentralMenu">
+        <if test="_databaseId == 'mariadb'">
+            SELECT * FROM central_menu WHERE layout_id = #{layoutId}
+        </if>
+        <if test="_databaseId == 'oracle'">
+            SELECT
+                menu_id, layout_id,
+                CASE WHEN priority = 1 THEN true ELSE false END as priority,
+                CASE WHEN expanded = 1 THEN true ELSE false END as expanded,
+                created_date, modified_date
+            FROM central_menu WHERE layout_id = #{layoutId}
+        </if>
+    </select>
+
+    <!-- Update for MariaDB -->
+    <update id="update" parameterType="CentralMenu" databaseId="mariadb">
+        UPDATE central_menu
+        SET priority = #{priority},
+            expanded = #{expanded},
+            modified_date = NOW()
+        WHERE menu_id = #{menuId}
+    </update>
+
+    <!-- Update for Oracle -->
+    <update id="update" parameterType="CentralMenu" databaseId="oracle">
+        UPDATE central_menu
+        SET priority = CASE WHEN #{priority} = true THEN 1 ELSE 0 END,
+            expanded = CASE WHEN #{expanded} = true THEN 1 ELSE 0 END,
+            modified_date = SYSTIMESTAMP
+        WHERE menu_id = #{menuId}
+    </update>
+
+    <!-- Delete -->
+    <delete id="deleteById" parameterType="Long">
+        DELETE FROM central_menu WHERE menu_id = #{menuId}
+    </delete>
+
+    <delete id="deleteByLayoutId" parameterType="Long">
+        DELETE FROM central_menu WHERE layout_id = #{layoutId}
+    </delete>
+
+</mapper>

@@ -57,3 +57,46 @@ CREATE TABLE reply (
 CREATE INDEX idx_board_id ON file(board_id);
 CREATE INDEX idx_board_id ON comment(board_id);
 CREATE INDEX idx_comment_id ON reply(comment_id);
+
+-- Drop screen layout tables if they exist
+DROP TABLE IF EXISTS card;
+DROP TABLE IF EXISTS central_menu;
+DROP TABLE IF EXISTS screen_layout;
+
+-- Screen layout table for storing layout configurations
+CREATE TABLE screen_layout (
+    layout_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Card table for storing card components
+CREATE TABLE card (
+    card_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    layout_id BIGINT NOT NULL,
+    position VARCHAR(10) NOT NULL, -- 'LEFT_1', 'LEFT_2', 'RIGHT_1', 'RIGHT_2'
+    title VARCHAR(255) NOT NULL,
+    horizontal_collapse BOOLEAN DEFAULT FALSE,
+    vertical_collapse BOOLEAN DEFAULT FALSE,
+    title_only BOOLEAN DEFAULT FALSE,
+    expanded BOOLEAN DEFAULT FALSE,
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (layout_id) REFERENCES screen_layout(layout_id) ON DELETE CASCADE
+);
+
+-- Central menu table for storing central menu component
+CREATE TABLE central_menu (
+    menu_id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    layout_id BIGINT NOT NULL,
+    priority BOOLEAN DEFAULT FALSE,
+    expanded BOOLEAN DEFAULT FALSE,
+    created_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (layout_id) REFERENCES screen_layout(layout_id) ON DELETE CASCADE
+);
+
+-- Create indexes for screen layout tables
+CREATE INDEX idx_layout_id ON card(layout_id);
+CREATE INDEX idx_layout_id ON central_menu(layout_id);
